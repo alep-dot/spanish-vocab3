@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Human Geography Vocabulary Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 {
+      color: #333;
+    }
+    .quiz-container {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      width: 300px;
+      text-align: center;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .options {
+      list-style-type: none;
+      padding: 0;
+    }
+    .options li {
+      background-color: #f9f9f9;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .options li:hover {
+      background-color: #dcdcdc;
+    }
+    .options li.correct {
+      background-color: #c8e6c9;
+    }
+    .options li.incorrect {
+      background-color: #ffcdd2;
+    }
+    .feedback {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .next-button {
+      display: none;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .next-button:hover {
+      background-color: #0056b3;
+    }
+    .mode-selection {
+      margin-bottom: 20px;
+    }
+    #answer-input {
+      display: none;
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <h1>Geografía Humana: Quiz de Vocabulario</h1>
+  <div class="quiz-container">
+    <div class="mode-selection">
+      <label>
+        <input type="radio" name="mode" value="multiple-choice" checked> Multiple Choice
+      </label>
+      <label>
+        <input type="radio" name="mode" value="writing"> Writing
+      </label>
+    </div>
+    <div class="question" id="question">Cargando palabra...</div>
+    <ul class="options" id="options"></ul>
+    <input type="text" id="answer-input" placeholder="Escribe tu respuesta aquí...">
+    <div class="feedback" id="feedback"></div>
+    <button class="next-button" id="next-button" onclick="nextWord()">Next</button>
+  </div>
+
+  <script>
+    const words = [
+      { term: "La aglomeración", definition: "Muchedumbre" },
+      { term: "Agrícola", definition: "Que pertenece a la agricultura" },
+      { term: "Aislado, aislada", definition: "Solo, apartado" },
+      { term: "Ambiental", definition: "Relativo al medio ambiente" },
+      { term: "El arrendamiento", definition: "Contrato para adquirir por pago el goce temporal de una propiedad" },
+      { term: "El colonialismo", definition: "Régimen en el que un Estado explota y controla un territorio ajeno" },
+      { term: "La congestión", definition: "La acumulación excesiva de algo" },
+      { term: "El consumismo", definition: "Tendencia al consumo excesivo e innecesario de bienes y productos" },
+      { term: "La emigración", definition: "Desplazamiento desde el lugar de origen a otro lugar para establecerse en él" },
+      { term: "El emplazamiento", definition: "Situación, colocación, ubicación" },
+      { term: "La empresa", definition: "Entidad dedicada a actividades industriales, mercantiles o de prestación de servicios" },
+      { term: "El entorno", definition: "Ambiente" },
+      { term: "El éxodo", definition: "Emigración de un pueblo o de una muchedumbre de personas" },
+      { term: "La explotación", definition: "Conjunto de elementos destinados a sacar provecho de un producto natural" },
+      { term: "Extranjero, extranjera", definition: "Objeto o persona de otro país" },
+      { term: "El flujo", definition: "Acción y efecto de fluir" },
+      { term: "El índice de...", definition: "Expresión numérica de la relación entre dos cantidades" },
+      { term: "La industrialización", definition: "El desarrollo de industria y fabricación, usualmente por motivos económicos" },
+      { term: "La infraestructura", definition: "Elementos o servicios necesarios para funcionamiento adecuado de una región" },
+      { term: "La localización", definition: "Ubicación; colocación" },
+      { term: "La materia prima", definition: "Materia que una industria necesita para transformarla en un producto" },
+      { term: "Migratorio, migratoria", definition: "Que se traslada del lugar donde habita" },
+      { term: "La mortalidad", definition: "Tasa de muertes en población durante un tiempo determinado" },
+      { term: "La mundialización", definition: "Producir un alcance mundial de algo" },
+      { term: "La nacionalización", definition: "Efecto de naturalizar en un país a personas o cosas que eran de otro país" },
+      { term: "La natalidad", definition: "Tasa de nacimientos en población durante un tiempo determinado" },
+      { term: "El paisaje", definition: "Extensión de campo que se ve desde un sitio; panorama, vista" },
+      { term: "La planificación", definition: "Plan hecho metódicamente, de forma organizada" },
+      { term: "La polarización", definition: "Disposición de las partes en dos direcciones contrarias" },
+      { term: "La propiedad", definition: "Derecho de poseer algo y poder disponer de ello dentro de los límites legales" },
+      { term: "El proteccionismo", definition: "Política económica que complica la entrada de productos que compiten con productos nacionales" },
+      { term: "El rendimiento", definition: "Producto o resultado obtenido del trabajo" },
+      { term: "El subdesarrollo", definition: "Situación de un país que no alcanza ciertos estándares económicos o sociales" },
+      { term: "La tasa", definition: "Valoración, medida, relación entre dos magnitudes" },
+      { term: "La urbanización", definition: "Núcleo residencial poblado" },
+      { term: "La xenofobia", definition: "Fobia a lo extranjero o a los extranjeros" }
+    ];
+
+    let shuffledWords = shuffle(words); // Shuffle the words once at the beginning
+    let currentWord = 0;
+    const questionElement = document.getElementById('question');
+    const optionsElement = document.getElementById('options');
+    const feedbackElement = document.getElementById('feedback');
+    const nextButton = document.getElementById('next-button');
+    const answerInput = document.getElementById('answer-input');
+    let mode = 'multiple-choice'; // default mode
+
+    // Event listener for mode change
+    document.querySelectorAll('input[name="mode"]').forEach(radio => {
+      radio.addEventListener('change', (event) => {
+        mode = event.target.value;
+        resetWord();
+      });
+    });
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function loadWord() {
+      feedbackElement.textContent = '';
+      nextButton.style.display = 'none';
+      const word = shuffledWords[currentWord];
+      questionElement.textContent = word.term;
+
+      if (mode === 'multiple-choice') {
+        optionsElement.style.display = 'block';
+        answerInput.style.display = 'none';
+        const otherDefinitions = shuffledWords.filter(w => w.definition !== word.definition).slice(0, 3).map(w => w.definition);
+        const shuffledOptions = shuffle([word.definition, ...otherDefinitions]);
+
+        optionsElement.innerHTML = '';
+        shuffledOptions.forEach(option => {
+          const li = document.createElement('li');
+          li.textContent = option;
+          li.addEventListener('click', () => checkAnswer(option, word.definition, li));
+          optionsElement.appendChild(li);
+        });
+      } else {
+        optionsElement.style.display = 'none';
+        answerInput.style.display = 'block';
+        answerInput.value = ''; // clear previous input
+        answerInput.addEventListener('keyup', (event) => {
+          if (event.key === 'Enter') {
+            checkAnswer(answerInput.value, word.definition);
+          }
+        });
+      }
+    }
+
+    function checkAnswer(selected, correct) {
+      if (mode === 'multiple-choice') {
+        const options = document.querySelectorAll('.options li');
+        options.forEach(option => {
+          option.classList.add(option.textContent === correct ? 'correct' : 'incorrect');
+          option.style.pointerEvents = 'none'; // Disable further clicks
+        });
+      }
+
+      feedbackElement.textContent = selected.trim().toLowerCase() === correct.toLowerCase() ? 'Correcto!' : `Incorrecto. La respuesta correcta es: ${correct}`;
+      nextButton.style.display = 'block'; // Show the Next button
+    }
+
+    function nextWord() {
+  // Check if we have finished all the words
+  if (currentWord === shuffledWords.length - 1) {
+    // Show a message and a retry button
+    questionElement.textContent = "¡Has terminado de responder todas las preguntas! ¿Te gustaría intentarlo de nuevo?";
+    optionsElement.innerHTML = ''; // Clear any previous options
+    feedbackElement.textContent = ''; // Clear feedback
+
+    // Create a Retry button
+    const retryButton = document.createElement('button');
+    retryButton.textContent = 'Reintentar';
+    retryButton.style.marginTop = '20px';
+    retryButton.onclick = function() {
+      currentWord = 0; // Reset the quiz
+      shuffledWords = shuffle(words); // Shuffle the words again
+      loadWord(); // Load the first word again
+    };
+
+    // Append the retry button to the quiz container
+    optionsElement.appendChild(retryButton);
+    nextButton.style.display = 'none'; // Hide the Next button
+  } else {
+    // Otherwise, go to the next word
+    currentWord = (currentWord + 1) % shuffledWords.length;
+    resetWord();
+  }
+}
+
+    function resetWord() {
+      // Reset any existing styles or events
+      const options = document.querySelectorAll('.options li');
+      options.forEach(option => {
+        option.classList.remove('correct', 'incorrect');
+        option.style.pointerEvents = 'auto'; // Enable clicking again
+      });
+      loadWord();
+    }
+
+    loadWord();
+  </script>
+</body>
+</html>
